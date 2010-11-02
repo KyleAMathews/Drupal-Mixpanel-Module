@@ -1,0 +1,4 @@
+name = Mixpanel
+description = Provides integration with the Mixpanel realtime analytics service.
+package = Mixpanel
+core = 6.x
