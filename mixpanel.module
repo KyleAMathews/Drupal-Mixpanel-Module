@@ -79,6 +79,28 @@ function mixpanel_requirements($phase) {
   return $requirements;
 }
 
+/**
+ * Implementation of hook_form_alter().
+ */
+function mixpanel_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == "user_profile_form") {
+    $form['#submit'][] = "mixpanel_user_profile_form_submit";
+  }
+}
+
+/**
+ * Submit function for the user_profile_form to let us track user changes
+ * to their accounts.
+ */
+function mixpanel_user_profile_form_submit($form, $form_state) {
+  mixpanel_track("user-account-updated");
+
+  // If a picture was uploaded, submit an event for that as well.
+  if (isset($form_state['values']['picture'])) {
+    mixpanel_track("user-picture-changed");
+  }
+}
+
 /*
  * Implementation of hook_og().
  */
@@ -115,7 +137,9 @@ function mixpanel_user($op, $edit, $account, $category) {
       break;
 
     case 'update':
-      mixpanel_track("user-account-updated", null, $account);
+      // We can't use this unfortunately as the LDAP module updates a person's account each time they login.
+      // We'll use hook_form_alter instead to detect someone submittng an account update.
+      //mixpanel_track("user-account-updated", null, $account);
       break;
 
     case 'login':
@@ -253,6 +277,8 @@ class MetricsTracker {
         $url = $this->host . 'track/?data=' . base64_encode(json_encode($params));
         // You still need to run as a background process.
         exec("curl '" . $url . "' >/dev/null 2>&1 &"); 
+        // Uncomment the following line and comment the previous line to send events to /tmp/drupal_debug (devel module must be installed).
+//        dd($params);
     }
 
     function track_funnel($funnel, $step, $goal, $properties=array()) {
