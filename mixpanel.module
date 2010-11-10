@@ -26,6 +26,12 @@ var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(mp
 code;
     drupal_set_html_head($mixpanel_init_code);
   }
+
+  // Track visits to user pages.
+  if (arg(0) == "user" && is_numeric(arg(1))) {
+    mixpanel_track("view-user-profile", array('visited-user' => arg(1)));
+  }
+
 }
 
 /**
