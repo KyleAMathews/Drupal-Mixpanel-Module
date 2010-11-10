@@ -1,0 +1,4 @@
+name = Mixpanel Spaces
+description = Sub module of Mixpanel that tracks usage of features within spaces.
+package = Mixpanel
+core = 6.x

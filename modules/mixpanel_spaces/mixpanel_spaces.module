@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * Implementation of hook_mixpanel_event_properties_alter(). 
+ */
+function mixpanel_spaces_mixpanel_event_properties_alter($properties) {
+  // Setup Space specific properties.
+  if (module_exists('spaces') && $space = spaces_get_space()) {
+    $properties['space-id'] = $space->id;
+    $properties['space-type'] = $space->type;
+    if ($space->type == "og") {
+      $properties['group-name'] = $space->group->title;
+      $properties['group-id'] = $space->id;
+    }
+  }
+}
+function mixpanel_spaces_context_page_reaction() {
+  $contexts = context_active_contexts();
+  foreach ($contexts as $context) {
+    if ($menu = $context->reactions['menu']) {
+      $type = "";
+      $nid = "";
+      if ($menu == arg(0)) {
+        $type = "index";
+      }
+      if (is_numeric(arg(1))) {
+        $type = "show";
+      }
+      if (arg(2) == "edit") {
+        $type = "edit";
+      }
+      if (arg(2) == "delete") {
+        $type = "delete";
+      }
+      if (arg(1) == "add") {
+        $type = "add";
+      }
+      if ($type != "index" && is_numeric(arg(1))) {
+        $nid = arg(1);
+      }
+      else {
+        $nid = "n/a";
+      }
+      mixpanel_track("feature-view-" . $menu, array('nid' => $nid, 'view-type' => $type));
+    }
+  }
+}

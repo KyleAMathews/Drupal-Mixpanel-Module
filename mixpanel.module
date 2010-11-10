@@ -1,5 +1,5 @@
 <?php
-
+// TODO track searches, use of contact form -- might have to use form_alters for these.
 /**
  * Implementation of hook_init().
  */
@@ -205,7 +205,6 @@ function mixpanel_track($event, $custom_properties = array(), $account = null) {
   
   // Setup default properties.
   $cohort = format_date($account->created, 'custom', "M-Y");
-
   $properties = array(
     'uid' => $account->uid,
     'distinct_id' => $account->uid,
@@ -213,16 +212,8 @@ function mixpanel_track($event, $custom_properties = array(), $account = null) {
     'ip' => $_SERVER['REMOTE_ADDR'],
   );
 
-  // Setup Space specific tracking.
-  if (module_exists('spaces')) {
-    $space = spaces_get_space();
-    $properties['space-id'] = $space->id;
-    $properties['space-type'] = $space->type;
-    if ($space->type == "og") {
-      $properties['group-name'] = $space->group->title;
-      $properties['group-id'] = $space->id;
-    }
-  }
+  // Let other modules alter the properties.
+  drupal_alter('mixpanel_event_properties', $properties);
 
   // Merge default properties with any passed-in properties. Any passed-in properties will overwrite the defaults.
   if (!empty($custom_properties)) {
