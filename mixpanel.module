@@ -299,9 +299,9 @@ class MetricsTracker {
         }
         $url = $this->host . 'track/?data=' . base64_encode(json_encode($params));
         // You still need to run as a background process.
-//        exec("curl '" . $url . "' >/dev/null 2>&1 &");
+        exec("curl '" . $url . "' >/dev/null 2>&1 &");
         // Uncomment the following line and comment the previous line to send events to /tmp/drupal_debug (devel module must be installed).
-        dd($params);
+        //dd($params);
     }
 
     function track_funnel($funnel, $step, $goal, $properties=array()) {
