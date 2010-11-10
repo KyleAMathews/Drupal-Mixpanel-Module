@@ -1,5 +1,5 @@
 <?php
-// TODO track searches, use of contact form -- might have to use form_alters for these.
+
 /**
  * Implementation of hook_init().
  */

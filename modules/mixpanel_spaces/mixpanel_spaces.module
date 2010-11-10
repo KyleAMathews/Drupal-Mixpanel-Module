@@ -43,5 +43,9 @@ function mixpanel_spaces_context_page_reaction() {
       }
       mixpanel_track("feature-view-" . $menu, array('nid' => $nid, 'view-type' => $type));
     }
+    // If we're on a user page.
+    if (arg(0) == "user" && is_numeric(arg(1))) {
+      mixpanel_track("feature-view-user", array('visited-user' => arg(1)));
+    }
   }
 }
