@@ -29,7 +29,7 @@ code;
 
   // Track visits to user pages.
   if (arg(0) == "user" && is_numeric(arg(1))) {
-    mixpanel_track("view-user-profile", array('visited-user' => arg(1)));
+    mixpanel_track("user-view-profile", array('visited-user' => arg(1)));
   }
 
 }
