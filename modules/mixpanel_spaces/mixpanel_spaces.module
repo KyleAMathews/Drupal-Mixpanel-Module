@@ -35,6 +35,9 @@ function mixpanel_spaces_context_page_reaction() {
       if (arg(1) == "add") {
         $type = "add";
       }
+      if (arg(1) == "popular") {
+        $type = "popular";
+      }
       if ($type != "index" && is_numeric(arg(1))) {
         $nid = arg(1);
       }
