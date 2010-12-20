@@ -189,24 +189,32 @@ function mixpanel_nodeapi($node, $op) {
   if (variable_get('mixpanel_token', '') == '') {
     return;
   }
+  $group_id = "";
+  if (!empty($node->og_groups) && in_array($op, array('delete','insert','update'))) {
+    $group_id = array_pop(array_values($node->og_groups));
+    $group_node = node_load($group_id);
+  }
   switch($op) {
     case 'delete':
       mixpanel_track("node-deleted", array('node-title' => $node->title,
-                                        'group-id' => array_pop(array_values($node->og_groups)),
+                                        'group-id' => $group_id,
+                                        'group-name' => $group_node->title,
                                         'node-id' => $node->nid,
                                         'node-type' => $node->type));
       break;
 
     case 'insert':
       mixpanel_track("node-created", array('node-title' => $node->title,
-                                        'group-id' => array_pop(array_values($node->og_groups)),
+                                        'group-id' => $group_id,
+                                        'group-name' => $group_node->title,
                                         'node-id' => $node->nid,
                                         'node-type' => $node->type));
       break;
 
     case 'update':
       mixpanel_track("node-updated", array('node-title' => $node->title,
-                                        'group-id' => array_pop(array_values($node->og_groups)),
+                                        'group-id' => $group_id,
+                                        'group-name' => $group_node->title,
                                         'node-id' => $node->nid,
                                         'node-type' => $node->type));
   }
