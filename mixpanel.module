@@ -157,27 +157,27 @@ function mixpanel_user($op, $edit, $account, $category) {
   if (variable_get('mixpanel_token', '') == '') {
     return;
   }
-  switch($op) {
+  switch ($op) {
     case 'insert':
-      mixpanel_track("user-inserted", null, $account);
+      mixpanel_track("user-inserted", NULL, $account);
       break;
 
     case 'delete':
-      mixpanel_track("user-deleted", null, $acccount);
+      mixpanel_track("user-deleted", NULL, $acccount);
       break;
 
     case 'update':
       // We can't use this unfortunately as the LDAP module updates a person's account each time they login.
       // We'll use hook_form_alter instead to detect someone submittng an account update.
-      //mixpanel_track("user-account-updated", null, $account);
+      //mixpanel_track("user-account-updated", NULL, $account);
       break;
 
     case 'login':
-      mixpanel_track("user-login", null, $account);
+      mixpanel_track("user-login", NULL, $account);
       break;
 
     case 'logout':
-      mixpanel_track("user-logout", null, $account);
+      mixpanel_track("user-logout", NULL, $account);
       break;
   }
 }
@@ -190,11 +190,11 @@ function mixpanel_nodeapi($node, $op) {
     return;
   }
   $group_id = "";
-  if (!empty($node->og_groups) && in_array($op, array('delete','insert','update'))) {
+  if (!empty($node->og_groups) && in_array($op, array('delete', 'insert', 'update'))) {
     $group_id = array_pop(array_values($node->og_groups));
     $group_node = node_load($group_id);
   }
-  switch($op) {
+  switch ($op) {
     case 'delete':
       mixpanel_track("node-deleted", array('node-title' => $node->title,
                                         'group-id' => $group_id,
@@ -237,7 +237,7 @@ function mixpanel_comment($comment, $op) {
   $node_results = db_fetch_array(db_query("SELECT title, type
                                     FROM {node}
                                     WHERE nid = %d", $comment->nid));
-  switch($op) {
+  switch ($op) {
     case 'publish':
      mixpanel_track("comment-created", array('node-id' => $comment->nid,
                                         'node-title' => $node_results['title'],
@@ -249,7 +249,7 @@ function mixpanel_comment($comment, $op) {
   }
 }
 
-function mixpanel_track($event, $custom_properties = array(), $account = null) {
+function mixpanel_track($event, $custom_properties = array(), $account = NULL) {
   if (variable_get('mixpanel_token', '') == '') {
     return;
   }
@@ -288,14 +288,7 @@ function mixpanel_track($event, $custom_properties = array(), $account = null) {
 
 
 /**
- * If you wish to do metric logging from your backend, the best method of doing this is 
- * to do it in a non-blocking way. This will let your pages continue to execute at
- * about the same speed  while logging metric data in the background. Please note: If 
- * you're on a shared host, you may be limited in logging metric data with a background 
- * process.
- *
- * Feel free to modify this code to your own environments liking.
- *
+ * Send data to mixpanel.com. Code taken with some modifications from Mixpanel's documentation.
  */
 class MetricsTracker {
     public $token;
@@ -309,7 +302,7 @@ class MetricsTracker {
             'properties' => $properties
             );
 
-        if (!isset($params['properties']['token'])){
+        if (!isset($params['properties']['token'])) {
             $params['properties']['token'] = $this->token;
         }
         $url = $this->host . 'track/?data=' . base64_encode(json_encode($params));
